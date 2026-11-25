@@ -1,0 +1,33 @@
+# MANIFEST · ClawHunt #2378 新建线索表单交付物
+# 生成方式：find . -type f（排除 node_modules、dist、.git、MANIFEST 自身）| sort | xargs sha256sum
+# 生成后不再改动所列文件；改动后须重新生成。
+
+3873a3f5c23cbcf6e5bb710712048dd22821b8a98999832fb10ddee954b443bb  ./.github/workflows/frontend-ci.yml
+87e1c9d7b72d37d0d5304974a78bb52f067598fac025965192fd26e8f6341f48  ./.gitignore
+39d867164abb50d0cb193153bb35590f9b64177d2d16a931abe1c95438b2f061  ./ACCEPTANCE-EVIDENCE.md
+9a1c21bbbbec3e24123614eb6856fb2bb6e825220f4813e326e90d45760ea390  ./README.md
+d036d8cfdeade0566e68111f9d29b732689ad39060c260821a1003eb0fd97429  ./eslint.config.js
+f61f2ce04b6132e84716b6fc9357cfd76bee4553ef0d6e296e17230ccf4ceccc  ./evidence/01-strong-other.png
+f78a4f7518bb5d6a4dddfabbea40b3e339f1f81648f9756c95e7594d8664904e  ./evidence/02-strong-pool.png
+cb4a676cd08158fb7ceae7f6b56e55180dabb5d9d049f6b3950abc93d6dc9e62  ./evidence/03-weak.png
+4788d5e124577fa0bf309f42fa15a813171e2b1b95b22e4685394c7a34bf0122  ./evidence/04-submit-success.png
+ca9f0c17a7199a04779fe37c248cc18dfd629a7c4a097f4d5068411586272add  ./evidence/mutation-check.log
+4fd6cfa6061710766f05452e2f0c59593444bbe7c2e8139373b71e53cda8a566  ./evidence/run-all.log
+5b78fd0fdf897897628dd9f00de7424c02da5302b480709f4c0253ae141c047f  ./index.html
+342fba37cea71db60e704752d71f9c900cfa5d4612e0a109e99f28dfd20c9382  ./package-lock.json
+0116ed35da3144f9a26accc350a7a05c6ea4c68111c3c8c0317fff6db7933af1  ./package.json
+95a4e165091bfaa8a016342c5d932afc225b6fc7772003649c15ad687c77f1ef  ./scripts/mutation-check.sh
+0c1fe23c29a615f3295a5acaf783f8bcf0d53a94467d459f21f333ae32bd915c  ./scripts/run-all.sh
+2ddf04ab732047594435170b4b8824dfbe308c5720ba6fef1fbdaa3d315600b8  ./scripts/screenshot.mjs
+aad89e35eeb16e1f9cb0dfa6a3731c805c32591fb7b6e09c47c60724ce2a8430  ./src/App.tsx
+8f6482387f9bca1de7da4d76a3d095f9024d3b49edf9a2f27d90d8fa20b1729c  ./src/components/LeadForm.test.tsx
+6f0aea9a19e169d59af76d18b5e06fc0620b9d40f6bcfc97be9740f1eaeb7b90  ./src/components/LeadForm.tsx
+87aa836b5680f3e0dcc60189eba6dfcaf3d7350b170663aadf3ea3d28a15a08e  ./src/index.css
+67257260218bb48d5f0b1877f65863ab4c8322a2b4c420fb177fa8ed67b7bc20  ./src/lib/creditCode.test.ts
+cc0d81aed8d16a7d4dcf8425e19c7ba3d9334fd857fef8e7ff7c3db51bd11412  ./src/lib/creditCode.ts
+a62a95fc343014cfb2b851379c4332934019d0aecb65733108d33ca9dee22ffa  ./src/lib/mockApi.ts
+105cf62750bc18a364e4df233702e1eb34da36692408e3fb8f9222b711bfef0a  ./src/main.tsx
+ae2f86ce79e8bba2e4695c2a5df7301cbb075b64ce8d761fa328416a32753457  ./src/test/setup.ts
+65996936fbb042915f7b74a200fcdde7e410f32a669b1ab9597cfaa4b0faddb5  ./src/vite-env.d.ts
+9cb86386fb4e5fba6754e37b7e688c4541d1b9bd8501291d3d672468ff157c11  ./tsconfig.json
+bb9ac37159a89fd37a9de353b750cff0404060229fb68386fa8e29e31dca387d  ./vite.config.ts
