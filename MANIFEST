@@ -4,7 +4,7 @@
 
 3873a3f5c23cbcf6e5bb710712048dd22821b8a98999832fb10ddee954b443bb  ./.github/workflows/frontend-ci.yml
 87e1c9d7b72d37d0d5304974a78bb52f067598fac025965192fd26e8f6341f48  ./.gitignore
-f9ce8c325dd6d08f1c1ed1fe7e882378d2aee7f1cd2ddeaad0d98d664873b544  ./ACCEPTANCE-EVIDENCE.md
+f4bbb0b744ff512c829f3b0b0f4111ebf6a84b1ca1f9cc8d37fa58e2381fb819  ./ACCEPTANCE-EVIDENCE.md
 906fbf655820c42dff9abe162e9ddaef88f344f44e6e03df4398e978f1c85997  ./README.md
 d036d8cfdeade0566e68111f9d29b732689ad39060c260821a1003eb0fd97429  ./eslint.config.js
 f61f2ce04b6132e84716b6fc9357cfd76bee4553ef0d6e296e17230ccf4ceccc  ./evidence/01-strong-other.png

@@ -19,11 +19,12 @@ jev_decision 直接指派，交付截止 2026-11-28 11:52 UTC）。
   （MUTATION_EXIT=0；旧日志 `evidence/mutation-check-20261125-rerun.log`
   与 `evidence/mutation-check.log` 均为历史记录，未改写）；
   MANIFEST 独立复核记录：`evidence/manifest-verify-20261126-newhead.log`
-  （34/34 OK，针对本 HEAD 631f3baa，在干净副本里独立复核；
+  （34/34 OK，针对上一 HEAD 631f3baa，在干净副本里独立复核；
   旧记录 `evidence/manifest-verify-20261125-newhead.log` 是针对上一 HEAD
   04470d59 的 31/31，未改写；更旧记录 `evidence/manifest-verify-20261125.log`
-  是针对 2fc2dca 的 29/29，未改写）；本 HEAD 的 MANIFEST 见仓内 MANIFEST，
-  `sha256sum -c` 全过；依赖审计证据：`evidence/npm-audit-20261125.log`
+  是针对 2fc2dca 的 29/29，未改写）；当前 HEAD b3933523 的 MANIFEST 共 35 项，
+  本地干净副本 `sha256sum -c` 35/35（退出码 0），独立 tarball 校验日志按
+  既往模式须下一轮才有，尚未独立校验过；依赖审计证据：`evidence/npm-audit-20261125.log`
 
 ## 实跑输出（原文，见 evidence/run-all.log）
 
