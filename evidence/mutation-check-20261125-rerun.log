@@ -1,0 +1,21 @@
+== 变异 A：信用代码校验位比较取反（!== 改成 ===）==
+变异已写入
+43:  if (expected === null || expected === value[17]) return 'check-digit';
+变异 A 变红（符合预期）：
+   × AC3 信用代码校验位 > AC3 校验位错误显示字段级错误提示 2114ms
+   × AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交 1588ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 16 skipped (18)
+变异 A 已还原
+== 变异 B：LEAD_COLLISION 映射串成 LEAD_IN_POOL 的文案 ==
+变异已写入
+49:  LEAD_COLLISION: '提交失败：该企业已在公海中，请先去公海领取。',
+变异 B 变红（符合预期）：
+   × AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示 977ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 17 skipped (18)
+变异 B 已还原
+== 还原后全套测试（必须绿）==
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+== 变异自证通过：两处变异均变红，还原后全绿 ==

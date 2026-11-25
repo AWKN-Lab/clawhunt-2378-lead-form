@@ -1,0 +1,37 @@
+MANIFEST 独立复核记录
+复核对象：AWKN-Lab/clawhunt-2378-lead-form main 2fc2dcab6948ac255ee106d523af56985446bdd6（29 项）
+复核方法：重新下载该提交的 tarball，在干净副本里跑 sha256sum -c MANIFEST
+命令：cd /tmp/manifest-verify-2fc2dca && sha256sum -c MANIFEST
+退出码：0
+日期：2026-11-25
+逐项结果（29/29 OK）：
+./.github/workflows/frontend-ci.yml: OK
+./.gitignore: OK
+./ACCEPTANCE-EVIDENCE.md: OK
+./README.md: OK
+./eslint.config.js: OK
+./evidence/01-strong-other.png: OK
+./evidence/02-strong-pool.png: OK
+./evidence/03-weak.png: OK
+./evidence/04-submit-success.png: OK
+./evidence/mutation-check.log: OK
+./evidence/run-all.log: OK
+./index.html: OK
+./package-lock.json: OK
+./package.json: OK
+./scripts/mutation-check.sh: OK
+./scripts/run-all.sh: OK
+./scripts/screenshot.mjs: OK
+./src/App.tsx: OK
+./src/components/LeadForm.test.tsx: OK
+./src/components/LeadForm.tsx: OK
+./src/index.css: OK
+./src/lib/creditCode.test.ts: OK
+./src/lib/creditCode.ts: OK
+./src/lib/mockApi.ts: OK
+./src/main.tsx: OK
+./src/test/setup.ts: OK
+./src/vite-env.d.ts: OK
+./tsconfig.json: OK
+./vite.config.ts: OK
+结论：29/29 OK，MANIFEST 与 main 2fc2dca 逐项一致。
