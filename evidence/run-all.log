@@ -5,7 +5,7 @@ v24.22.1
 npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
 
-added 292 packages in 31s
+added 292 packages in 33s
 
 65 packages are looking for funding
   run `npm fund` for details
@@ -21,25 +21,27 @@ added 292 packages in 31s
 
 == test ==
 
- RUN  v3.2.7 /home/hatch/workspace/goals/20/hidden_files/clawhunt-hourly-build/2378/clawhunt-2378-lead-form
+ RUN  v3.2.7 /home/hatch/workspace/goals/20/hidden_files/clawhunt-hourly-build/2378-fix/work
 
- ✓ src/lib/creditCode.test.ts (5 tests) 7ms
- ✓ src/components/LeadForm.test.tsx (15 tests) 5343ms
-   ✓ AC1 strong 归属他人 > AC1 提交按钮禁用且显示对方报备时间  519ms
-   ✓ AC1 strong 归属他人 > AC1 提供发起撞单申诉入口并带 matched_lead_id  351ms
-   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认无法提交  378ms
-   ✓ AC2 weak 疑似重复 > AC2 weak 已勾选未填原因无法提交，填原因后可提交  722ms
-   ✓ AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交  598ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示  320ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_IN_POOL 显示对应中文提示  387ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_HOLDING_LIMIT 显示对应中文提示  314ms
-   ✓ 提交成功 > 提交成功跳转详情页并用 Toast 显示服务端报备时间  532ms
+ ✓ src/lib/creditCode.test.ts (5 tests) 6ms
+ ✓ src/components/LeadForm.test.tsx (18 tests) 7222ms
+   ✓ AC1 strong 归属他人 > AC1 提交按钮禁用且显示对方报备时间  581ms
+   ✓ AC1 strong 归属他人 > AC1 提供发起撞单申诉入口并带 matched_lead_id  618ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认、原因已填仍无法提交  778ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 已勾选未填原因无法提交，填原因后可提交  719ms
+   ✓ AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交  721ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示  389ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_IN_POOL 显示对应中文提示  345ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_HOLDING_LIMIT 显示对应中文提示  373ms
+   ✓ 提交成功 > 提交成功跳转详情页并用 Toast 显示 mock 报备时间（演示数据）  486ms
    ✓ 字段校验 > 企业名称 61 个字提示最多 60 个字  361ms
+   ✓ 异步撞单预检竞态 > 旧预检进行中修改企业名称，提交不得采用旧预检结果  347ms
+   ✓ 异步撞单预检竞态 > 旧请求晚于新请求返回，旧响应不得覆盖新状态  346ms
 
  Test Files  2 passed (2)
-      Tests  20 passed (20)
-   Start at  12:55:00
-   Duration  19.92s (transform 5.37s, setup 735ms, collect 12.04s, tests 5.35s, environment 2.71s, prepare 429ms)
+      Tests  23 passed (23)
+   Start at  13:43:34
+   Duration  22.54s (transform 5.88s, setup 767ms, collect 12.83s, tests 7.23s, environment 2.54s, prepare 509ms)
 
 == build ==
 
@@ -51,9 +53,8 @@ transforming...
 ✓ 3900 modules transformed.
 rendering chunks...
 computing gzip size...
-dist/index.html                   0.36 kB │ gzip:   0.28 kB
+dist/index.html                   0.36 kB │ gzip:   0.29 kB
 dist/assets/index-viJtphAm.css  149.72 kB │ gzip:  15.72 kB
-dist/assets/index-CltCrDbg.js   493.90 kB │ gzip: 154.94 kB
-✓ built in 24.74s
+dist/assets/index-C1-FqEwU.js   494.28 kB │ gzip: 155.03 kB
+✓ built in 24.58s
 == 全部通过 ==
-RUNALL_EXIT=0

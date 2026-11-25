@@ -67,6 +67,9 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
     key: string;
     promise: Promise<CollisionResult | null>;
   } | null>(null);
+  // 预检请求版本号：每次新起预检递增。旧请求晚于新请求返回时，
+  // 版本号已过期，其结果不得写回 state（过期响应隔离）。
+  const checkVersionRef = useRef(0);
   // 最近一次已拿到结果的预检 key；提交时值没变就直接用 state 里的结果。
   const lastCheckedKeyRef = useRef<string | null>(null);
 
@@ -100,15 +103,27 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
     const inFlight = inFlightCheckRef.current;
     if (inFlight && inFlight.key === key) return inFlight.promise;
     setChecking(true);
+    // 本次预检的版本号：比它旧的响应一律丢弃。
+    const version = ++checkVersionRef.current;
     const promise = api
       .collisionCheck({ companyName, creditCode, phone })
       .then((result) => {
-        setCollision(result);
-        if (result.level !== 'weak') {
-          setWeakConfirmed(false);
-          setWeakReason('');
+        // 过期响应隔离（两道闸）：只有最新一次预检、且表单值仍是
+        // 本次预检那三字段时，结果才能写回 state。旧请求晚到、
+        // 或用户已改字段，都不得覆盖新状态。
+        const currentKey = checkKey(
+          (form.getFieldValue('companyName') as string | undefined) ?? '',
+          (form.getFieldValue('creditCode') as string | undefined) ?? '',
+          (form.getFieldValue('phone') as string | undefined) ?? '',
+        );
+        if (version === checkVersionRef.current && currentKey === key) {
+          setCollision(result);
+          if (result.level !== 'weak') {
+            setWeakConfirmed(false);
+            setWeakReason('');
+          }
+          lastCheckedKeyRef.current = key;
         }
-        lastCheckedKeyRef.current = key;
         return result;
       })
       .catch(() => {
@@ -116,7 +131,11 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
         return null;
       })
       .finally(() => {
-        setChecking(false);
+        // 只有最新一次预检能关掉“正在预检”提示；旧请求的 finally
+        // 不得把新请求的提示关掉。
+        if (version === checkVersionRef.current) {
+          setChecking(false);
+        }
         if (inFlightCheckRef.current?.promise === promise) {
           inFlightCheckRef.current = null;
         }
@@ -155,9 +174,10 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
     try {
       const result = await form.validate();
       if (result !== true) return;
-      // 提交前先拿到最新的预检结论：有在途预检就等它，值变了就重检，
-      // 值没变直接用 state 里的结论。用返回的 result 而不用 state 做
-      // 判断——setState 是异步的，等完预检 state 不一定已更新。
+      // 提交前先拿到最新的预检结论：只有在途预检的 key 与当前表单
+      // 一致时才等它；key 不一致（用户改了企业名/信用代码/手机号）
+      // 就丢弃旧任务，按当前表单重新预检。用返回的 result 而不用
+      // state 做判断——setState 是异步的，等完预检 state 不一定已更新。
       const companyName =
         (form.getFieldValue('companyName') as string | undefined) ?? '';
       const creditCode =
@@ -165,8 +185,19 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
       const phone = (form.getFieldValue('phone') as string | undefined) ?? '';
       const key = checkKey(companyName, creditCode, phone);
       let latest: CollisionResult | null;
-      if (inFlightCheckRef.current) {
-        latest = await inFlightCheckRef.current.promise;
+      const inFlight = inFlightCheckRef.current;
+      if (inFlight && inFlight.key === key) {
+        latest = await inFlight.promise;
+        // 等待期间用户可能又改了字段：key 变了就丢弃这次结果，
+        // 按当前表单重新预检后再决定能不能提交。
+        const keyAfter = checkKey(
+          (form.getFieldValue('companyName') as string | undefined) ?? '',
+          (form.getFieldValue('creditCode') as string | undefined) ?? '',
+          (form.getFieldValue('phone') as string | undefined) ?? '',
+        );
+        if (keyAfter !== key) {
+          latest = await runCollisionCheck();
+        }
       } else if (key !== lastCheckedKeyRef.current) {
         latest = await runCollisionCheck();
       } else {
@@ -196,7 +227,7 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
           seatCount: values.seatCount,
           remark: values.remark ?? '',
         });
-        void MessagePlugin.success(`报备成功，报备时间 ${res.reportedAt}`);
+        void MessagePlugin.success(`报备成功，报备时间 ${res.reportedAt}（演示数据）`);
         try {
           window.history.pushState(null, '', `/sales/leads/${res.leadId}`);
         } catch {
@@ -235,10 +266,10 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
     return (
       <div data-testid="lead-detail">
         <Card title="线索已创建">
-          <p>报备成功，报备时间 {submitted.reportedAt}</p>
+          <p>报备成功，报备时间 {submitted.reportedAt}（演示数据）</p>
           <p>线索编号：{submitted.leadId}</p>
           <p>企业名称：{submitted.companyName}</p>
-          <p>报备时间：{submitted.reportedAt}</p>
+          <p>报备时间：{submitted.reportedAt}（演示数据）</p>
           <Button theme="primary" onClick={handleReset}>
             继续新建线索
           </Button>

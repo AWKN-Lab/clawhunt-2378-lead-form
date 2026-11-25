@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import LeadForm from './LeadForm';
-import { ApiError, type LeadApi } from '../lib/mockApi';
+import { ApiError, type CollisionResult, type LeadApi } from '../lib/mockApi';
 import { buildValidCreditCode } from '../lib/creditCode';
 
 const VALID_CREDIT_CODE = buildValidCreditCode('91330100MA0000000') as string;
@@ -82,6 +82,20 @@ describe('AC2 weak 疑似重复', () => {
     const weak = await screen.findByTestId('collision-weak');
     expect(weak).toHaveTextContent('疑似重复：疑似演示科技有限公司');
     expect(submitButton()).toHaveClass('t-is-disabled');
+  });
+
+  it('AC2 weak 未勾选确认、原因已填仍无法提交', async () => {
+    const user = userEvent.setup();
+    render(<LeadForm />);
+    await fillCompany(user, '疑似演示科技有限公司');
+    await screen.findByTestId('collision-weak');
+    // 只填原因、不勾选确认：仍须禁用提交（确认与原因两者缺一不可）。
+    await user.type(
+      screen.getByPlaceholderText('请填写与疑似线索不同的原因（必填）'),
+      '注册地址与经营范围均不同',
+    );
+    expect(submitButton()).toHaveClass('t-is-disabled');
+    expect(screen.queryByTestId('lead-detail')).not.toBeInTheDocument();
   });
 
   it('AC2 weak 已勾选未填原因无法提交，填原因后可提交', async () => {
@@ -169,7 +183,7 @@ describe('strong 在公海', () => {
 });
 
 describe('提交成功', () => {
-  it('提交成功跳转详情页并用 Toast 显示服务端报备时间', async () => {
+  it('提交成功跳转详情页并用 Toast 显示 mock 报备时间（演示数据）', async () => {
     const user = userEvent.setup();
     render(<LeadForm />);
     await fillRequired(user, '演示科技有限公司');
@@ -221,5 +235,98 @@ describe('字段校验', () => {
     await settleCollisionCheck();
     await user.click(submitButton());
     expect(await screen.findByText('请输入正确的 11 位手机号')).toBeInTheDocument();
+  });
+});
+
+describe('异步撞单预检竞态', () => {
+  const STRONG_OTHER: CollisionResult = {
+    level: 'strong',
+    owner: 'other',
+    matchedLeadId: 'lead-2026-0001',
+    reportedAt: '2026-11-20 10:24',
+    stage: '跟进中',
+  };
+
+  interface ControllableApi {
+    api: LeadApi;
+    checkCalls: Array<{ companyName: string; creditCode: string; phone: string }>;
+    pending: Array<(result: CollisionResult) => void>;
+    submitCalls: number;
+  }
+
+  // 可控 api：每次预检都返回挂起的 promise，由测试手动按顺序放行，
+  // 以复现“旧请求晚于新请求返回”的乱序场景；提交只记调用次数。
+  function controllableApi(): ControllableApi {
+    const ctl: ControllableApi = {
+      api: {
+        collisionCheck: (req) => {
+          ctl.checkCalls.push(req);
+          return new Promise<CollisionResult>((resolve) => {
+            ctl.pending.push(resolve);
+          });
+        },
+        submitLead: async () => {
+          ctl.submitCalls += 1;
+          return { leadId: 'lead-2026-0101', reportedAt: '2026-11-25 20:30' };
+        },
+      },
+      checkCalls: [],
+      pending: [],
+      submitCalls: 0,
+    };
+    return ctl;
+  }
+
+  it('旧预检进行中修改企业名称，提交不得采用旧预检结果', async () => {
+    const user = userEvent.setup();
+    const ctl = controllableApi();
+    render(<LeadForm api={ctl.api} />);
+    const companyInput = screen.getByPlaceholderText('请输入企业名称');
+    const phoneInput = screen.getByPlaceholderText('请输入 11 位手机号');
+    await user.type(companyInput, '强占演示科技有限公司');
+    await user.type(phoneInput, VALID_PHONE);
+    await user.tab();
+    // 此时两次失焦各触发一次预检（企业名失焦一次、手机号失焦一次），
+    // 两次都挂起；在途任务是旧企业名的那次。
+    await waitFor(() => expect(ctl.checkCalls.length).toBe(2));
+    await user.click(companyInput);
+    await user.clear(companyInput);
+    await user.type(companyInput, '演示科技有限公司');
+    // 回车提交不经过失焦：提交流程看到的仍是旧预检任务。
+    await user.keyboard('{Enter}');
+    // 新实现：提交流程比对 key，发现旧任务 key 与当前表单不符，丢弃后
+    // 按当前表单重新预检（第 3 次调用），放行它返回无撞单，即可提交。
+    ctl.pending[2]?.({ level: 'none' });
+    // 旧预检此时才返回 strong-归属他人：提交流程不得拿它拦提交。
+    ctl.pending[0](STRONG_OTHER);
+    ctl.pending[1](STRONG_OTHER);
+    const detail = await screen.findByTestId('lead-detail', {}, { timeout: 3000 });
+    expect(detail).toHaveTextContent('线索编号：lead-2026-0101');
+    expect(ctl.submitCalls).toBe(1);
+  });
+
+  it('旧请求晚于新请求返回，旧响应不得覆盖新状态', async () => {
+    const user = userEvent.setup();
+    const ctl = controllableApi();
+    render(<LeadForm api={ctl.api} />);
+    await fillCompany(user, '强占演示科技有限公司');
+    // 第一次预检（旧企业名）已开始且挂起。
+    await waitFor(() => expect(ctl.checkCalls.length).toBe(1));
+    // 改企业名并失焦：触发第二次预检（新 key），立即放行返回无撞单。
+    const companyInput = screen.getByPlaceholderText('请输入企业名称');
+    await user.click(companyInput);
+    await user.clear(companyInput);
+    await user.type(companyInput, '演示科技有限公司');
+    await user.tab();
+    await waitFor(() => expect(ctl.checkCalls.length).toBe(2));
+    ctl.pending[1]({ level: 'none' });
+    // 旧请求此时才返回 strong-归属他人：不得覆盖新状态。
+    ctl.pending[0](STRONG_OTHER);
+    // 给旧响应留出落地时间（微任务 + React 渲染 flush），再断言。
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    });
+    expect(screen.queryByTestId('collision-strong-other')).not.toBeInTheDocument();
+    expect(submitButton()).not.toHaveClass('t-is-disabled');
   });
 });
