@@ -18,10 +18,11 @@ jev_decision 直接指派，交付截止 2026-11-28 11:52 UTC）。
   变异自证日志：`evidence/mutation-check-20261125-rerun2.log`
   （MUTATION_EXIT=0；旧日志 `evidence/mutation-check-20261125-rerun.log`
   与 `evidence/mutation-check.log` 均为历史记录，未改写）；
-  MANIFEST 独立复核记录：`evidence/manifest-verify-20261125-newhead.log`
-  （31/31 OK，针对上一 HEAD 04470d59，在干净副本里独立复核；
-  旧记录 `evidence/manifest-verify-20261125.log` 是针对更旧 HEAD
-  2fc2dca 的 29/29，未改写）；本 HEAD 的 MANIFEST 见仓内 MANIFEST，
+  MANIFEST 独立复核记录：`evidence/manifest-verify-20261126-newhead.log`
+  （34/34 OK，针对本 HEAD 631f3baa，在干净副本里独立复核；
+  旧记录 `evidence/manifest-verify-20261125-newhead.log` 是针对上一 HEAD
+  04470d59 的 31/31，未改写；更旧记录 `evidence/manifest-verify-20261125.log`
+  是针对 2fc2dca 的 29/29，未改写）；本 HEAD 的 MANIFEST 见仓内 MANIFEST，
   `sha256sum -c` 全过；依赖审计证据：`evidence/npm-audit-20261125.log`
 
 ## 实跑输出（原文，见 evidence/run-all.log）
@@ -211,7 +212,13 @@ Toast 与详情卡已带「（演示数据）」标注。
   tough-cookie 5.1.2、React 18.3.1 在本次全树审计中均无告警。
   与 GPT 小范围终验裁决“1 项 moderate、2 项 critical”的出入：实测为
   3 项 moderate + 2 项 critical，多的 2 项 moderate 均为 @vitest/mocker，
-  来源不明，已如实记下，不作调和。5 条全部落在开发期工具链（vitest
+  来源不明，已如实记下，不作调和。唯一 GHSA 统计（GPT 终验第二轮口径）：
+  5 条记录对应 4 个唯一 GHSA——GHSA-82fw-gwwq-j7x9 在 vitest 与
+  @vitest/mocker 上是同一漏洞；唯一 moderate 2 个（GHSA-82fw-gwwq-j7x9、
+  GHSA-qxg6-89mg-rqv8）、唯一 critical 2 个（GHSA-5gmw-xhrv-c9v3、
+  GHSA-85c8-ppgw-ccpr）。5 条记录不等于 5 个独立漏洞；计数仍保留
+  3 moderate + 2 critical。上轮“1 项 moderate、2 项 critical”的原始依据
+  缺失，无法追溯。5 条全部落在开发期工具链（vitest
   及其依赖 tinypool），生产依赖 react 18.3.1 / react-dom 18.3.1 /
   tdesign-react 1.18.6 无告警；交付物是静态 dist，无 Node 运行时、
   无对外开发服务器；5 条的利用前提均为开发服务器/测试进程本地可达，

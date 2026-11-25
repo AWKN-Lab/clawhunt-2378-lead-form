@@ -1,0 +1,39 @@
+== 独立复核：新 HEAD 631f3baa 的 MANIFEST 34/34 ==
+命令：重新下载 main 631f3baa 的 tarball，在干净副本里跑 sha256sum -c MANIFEST
+时间：2026-11-26
+
+./.github/workflows/frontend-ci.yml: OK
+./.gitignore: OK
+./ACCEPTANCE-EVIDENCE.md: OK
+./README.md: OK
+./eslint.config.js: OK
+./evidence/01-strong-other.png: OK
+./evidence/02-strong-pool.png: OK
+./evidence/03-weak.png: OK
+./evidence/04-submit-success.png: OK
+./evidence/manifest-verify-20261125-newhead.log: OK
+./evidence/manifest-verify-20261125.log: OK
+./evidence/mutation-check-20261125-rerun.log: OK
+./evidence/mutation-check-20261125-rerun2.log: OK
+./evidence/mutation-check.log: OK
+./evidence/npm-audit-20261125.log: OK
+./evidence/run-all.log: OK
+./index.html: OK
+./package-lock.json: OK
+./package.json: OK
+./scripts/mutation-check.sh: OK
+./scripts/run-all.sh: OK
+./scripts/screenshot.mjs: OK
+./src/App.tsx: OK
+./src/components/LeadForm.test.tsx: OK
+./src/components/LeadForm.tsx: OK
+./src/index.css: OK
+./src/lib/creditCode.test.ts: OK
+./src/lib/creditCode.ts: OK
+./src/lib/mockApi.ts: OK
+./src/main.tsx: OK
+./src/test/setup.ts: OK
+./src/vite-env.d.ts: OK
+./tsconfig.json: OK
+./vite.config.ts: OK
+MANIFEST_EXIT=0

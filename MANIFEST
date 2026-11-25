@@ -4,7 +4,7 @@
 
 3873a3f5c23cbcf6e5bb710712048dd22821b8a98999832fb10ddee954b443bb  ./.github/workflows/frontend-ci.yml
 87e1c9d7b72d37d0d5304974a78bb52f067598fac025965192fd26e8f6341f48  ./.gitignore
-07e4eced97b11d09854982758b5c96f7f4ca74d869cfb9e7a5d93ce76a230316  ./ACCEPTANCE-EVIDENCE.md
+f9ce8c325dd6d08f1c1ed1fe7e882378d2aee7f1cd2ddeaad0d98d664873b544  ./ACCEPTANCE-EVIDENCE.md
 906fbf655820c42dff9abe162e9ddaef88f344f44e6e03df4398e978f1c85997  ./README.md
 d036d8cfdeade0566e68111f9d29b732689ad39060c260821a1003eb0fd97429  ./eslint.config.js
 f61f2ce04b6132e84716b6fc9357cfd76bee4553ef0d6e296e17230ccf4ceccc  ./evidence/01-strong-other.png
@@ -13,6 +13,7 @@ cb4a676cd08158fb7ceae7f6b56e55180dabb5d9d049f6b3950abc93d6dc9e62  ./evidence/03-
 24cff385ac734b97074373f04668897f8be54fa7727a09852c06877356004e8e  ./evidence/04-submit-success.png
 feeff9285f5e5098f6bcefea50d7a099bc1e17ac6ed9a4d98592a2aaa1e30ec7  ./evidence/manifest-verify-20261125-newhead.log
 063a389d9fa37a46507fc8ea90c892f2d8b7d26e764e2f5b88bcfb6afb7a916a  ./evidence/manifest-verify-20261125.log
+63d78b8d627f030ef99a0b49e0f0c5d51fe590f5c637e6646fc4818b579691a2  ./evidence/manifest-verify-20261126-newhead.log
 068a82d02f42bd6f46ed571a392f1b561c3b8152860175b3c1e4107da078978b  ./evidence/mutation-check-20261125-rerun.log
 d1e57013b2e487b23fee26c12f602f5b8d267049baba5bbdad42ebaba87a5e29  ./evidence/mutation-check-20261125-rerun2.log
 ca9f0c17a7199a04779fe37c248cc18dfd629a7c4a097f4d5068411586272add  ./evidence/mutation-check.log
