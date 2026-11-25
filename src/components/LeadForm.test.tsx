@@ -329,4 +329,48 @@ describe('异步撞单预检竞态', () => {
     expect(screen.queryByTestId('collision-strong-other')).not.toBeInTheDocument();
     expect(submitButton()).not.toHaveClass('t-is-disabled');
   });
+
+  it('提交等待预检期间再次修改字段，不得用旧预检结果提交新字段', async () => {
+    const user = userEvent.setup();
+    const ctl = controllableApi();
+    render(<LeadForm api={ctl.api} />);
+    const companyInput = screen.getByPlaceholderText('请输入企业名称');
+    const phoneInput = screen.getByPlaceholderText('请输入 11 位手机号');
+    await user.type(companyInput, '企业A');
+    await user.type(phoneInput, VALID_PHONE);
+    await user.tab();
+    // 两次失焦各触发一次预检（企业名失焦、手机号失焦），两次都挂起。
+    await waitFor(() => expect(ctl.checkCalls.length).toBe(2));
+    // 点提交：提交流程等在途的 A 预检（第 2 次调用）。
+    await user.click(submitButton());
+    // 等待期间改成企业 B 并失焦：触发 B 的预检（第 3 次调用），挂起。
+    await user.click(companyInput);
+    await user.clear(companyInput);
+    await user.type(companyInput, '企业B');
+    await user.tab();
+    await waitFor(() => expect(ctl.checkCalls.length).toBe(3));
+    // A 的预检返回无撞单：提交流程发现当前已是 B，丢弃 A 的结果，
+    // 转而等 B 的预检。先等提交流程确实停在 B 的预检上（微任务跑完），
+    // 再改字段，否则时序不确定。
+    ctl.pending[1]({ level: 'none' });
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    });
+    // 等 B 预检期间又改成企业 C（不失焦，不触发新预检）。
+    await user.click(companyInput);
+    await user.clear(companyInput);
+    await user.type(companyInput, '企业C');
+    // B 的预检返回无撞单：不得拿 B 的结果提交 C——须按 C 重新预检。
+    ctl.pending[2]({ level: 'none' });
+    // 新实现：提交流程发现当前已是 C，发起 C 的预检（第 4 次调用），
+    // 在它返回前不得提交。
+    await waitFor(() => expect(ctl.checkCalls.length).toBe(4));
+    expect(ctl.submitCalls).toBe(0);
+    expect(screen.queryByTestId('lead-detail')).not.toBeInTheDocument();
+    // C 的预检返回无撞单：此时提交 C 才是安全的。
+    ctl.pending[3]({ level: 'none' });
+    const detail = await screen.findByTestId('lead-detail', {}, { timeout: 3000 });
+    expect(detail).toHaveTextContent('企业名称：企业C');
+    expect(ctl.submitCalls).toBe(1);
+  });
 });

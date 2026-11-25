@@ -4,17 +4,20 @@
 
 3873a3f5c23cbcf6e5bb710712048dd22821b8a98999832fb10ddee954b443bb  ./.github/workflows/frontend-ci.yml
 87e1c9d7b72d37d0d5304974a78bb52f067598fac025965192fd26e8f6341f48  ./.gitignore
-f5b45dd313d83e0d79d85b5b7201611f5d67a4756b9a0d15a62459e58df5a046  ./ACCEPTANCE-EVIDENCE.md
-24c2507c1494b35c7a25e667b68d6f617f295451eeb5f513301da6bf25e59da8  ./README.md
+07e4eced97b11d09854982758b5c96f7f4ca74d869cfb9e7a5d93ce76a230316  ./ACCEPTANCE-EVIDENCE.md
+906fbf655820c42dff9abe162e9ddaef88f344f44e6e03df4398e978f1c85997  ./README.md
 d036d8cfdeade0566e68111f9d29b732689ad39060c260821a1003eb0fd97429  ./eslint.config.js
 f61f2ce04b6132e84716b6fc9357cfd76bee4553ef0d6e296e17230ccf4ceccc  ./evidence/01-strong-other.png
 f78a4f7518bb5d6a4dddfabbea40b3e339f1f81648f9756c95e7594d8664904e  ./evidence/02-strong-pool.png
 cb4a676cd08158fb7ceae7f6b56e55180dabb5d9d049f6b3950abc93d6dc9e62  ./evidence/03-weak.png
 24cff385ac734b97074373f04668897f8be54fa7727a09852c06877356004e8e  ./evidence/04-submit-success.png
+feeff9285f5e5098f6bcefea50d7a099bc1e17ac6ed9a4d98592a2aaa1e30ec7  ./evidence/manifest-verify-20261125-newhead.log
 063a389d9fa37a46507fc8ea90c892f2d8b7d26e764e2f5b88bcfb6afb7a916a  ./evidence/manifest-verify-20261125.log
 068a82d02f42bd6f46ed571a392f1b561c3b8152860175b3c1e4107da078978b  ./evidence/mutation-check-20261125-rerun.log
+d1e57013b2e487b23fee26c12f602f5b8d267049baba5bbdad42ebaba87a5e29  ./evidence/mutation-check-20261125-rerun2.log
 ca9f0c17a7199a04779fe37c248cc18dfd629a7c4a097f4d5068411586272add  ./evidence/mutation-check.log
-6b366fd76ca5d22fe4f009da2d7444786df30e486584ed84582817d59722720d  ./evidence/run-all.log
+f24475c8c65e596fc3bb48c2850647aabbcf8734285f72e87a49f8c14198266f  ./evidence/npm-audit-20261125.log
+40cecad0f6f886089ccfbfc8798c1794760391a6ffc43862da04e7477690da45  ./evidence/run-all.log
 5b78fd0fdf897897628dd9f00de7424c02da5302b480709f4c0253ae141c047f  ./index.html
 342fba37cea71db60e704752d71f9c900cfa5d4612e0a109e99f28dfd20c9382  ./package-lock.json
 0116ed35da3144f9a26accc350a7a05c6ea4c68111c3c8c0317fff6db7933af1  ./package.json
@@ -22,8 +25,8 @@ ca9f0c17a7199a04779fe37c248cc18dfd629a7c4a097f4d5068411586272add  ./evidence/mut
 0c1fe23c29a615f3295a5acaf783f8bcf0d53a94467d459f21f333ae32bd915c  ./scripts/run-all.sh
 2ddf04ab732047594435170b4b8824dfbe308c5720ba6fef1fbdaa3d315600b8  ./scripts/screenshot.mjs
 aad89e35eeb16e1f9cb0dfa6a3731c805c32591fb7b6e09c47c60724ce2a8430  ./src/App.tsx
-c7c897d450a4ecb5e1d6da0c6bc706ffb5e7b2487c564f53ca277fb50124ecaf  ./src/components/LeadForm.test.tsx
-5a1f9ff70d640e7ca26f8131999c65217177ad781d1e4ab4e8b8ec367ef0a9ea  ./src/components/LeadForm.tsx
+7222d7c3bc2b66d751141dee6db07fe5b623badf73ef86d76b051aa99806b958  ./src/components/LeadForm.test.tsx
+283ad872e302caed4212a31e6d0fce7ae2d68cd6bcfde82fc21de7d189d1c449  ./src/components/LeadForm.tsx
 87aa836b5680f3e0dcc60189eba6dfcaf3d7350b170663aadf3ea3d28a15a08e  ./src/index.css
 67257260218bb48d5f0b1877f65863ab4c8322a2b4c420fb177fa8ed67b7bc20  ./src/lib/creditCode.test.ts
 cc0d81aed8d16a7d4dcf8425e19c7ba3d9334fd857fef8e7ff7c3db51bd11412  ./src/lib/creditCode.ts

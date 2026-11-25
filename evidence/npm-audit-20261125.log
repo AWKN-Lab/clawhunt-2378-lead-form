@@ -1,0 +1,62 @@
+== npm audit（本机，2026-11-25）==
+命令：npm audit（仓根执行，Node v24.22.1、npm 10.9.4）
+退出码：1
+输出全文：
+npm warn audit 403 Forbidden - POST https://registry.npmjs.org/-/npm/v1/security/audits/quick - policy_denied
+{
+  detail: 'POST /-/npm/v1/security/audits/quick not permitted by policy',
+  error: 'policy_denied',
+  policy: 'zz_managed_internal_spaces_package_registries',
+  rule: 'POST /-/npm/v1/security/audits/quick'
+}
+npm error audit endpoint returned an error
+npm error A complete log of this run can be found in: /home/hatch/.npm/_logs/2026-11-25T15_37_46_252Z-debug-0.log
+
+结论：npm audit 在本机跑不通——出口代理对 npm CLI 的审计请求返回 403
+（policy_denied）。直接向同一审计接口发请求可以复现 403 的是 npm CLI
+自身的请求构造；用 curl 按 package-lock.json 重建依赖树直接 POST
+同一接口返回 HTTP 200 与真实审计结果（见下），说明端点本身可达，
+403 只拦 npm CLI 的那次请求（原因未定位到具体请求头/请求体差异，
+不猜测）。
+
+== 直接 POST 审计接口（2026-11-25，同一接口、同一依赖树）==
+请求：POST https://registry.npmjs.org/-/npm/v1/security/audits/quick
+请求头：Content-Type: application/json、npm-audit-version: 2、
+User-Agent: npm/10.9.4 node/v24.22.1 linux x64 workspaces/false
+请求体：按 package-lock.json 重建的 342 个包（name + version），
+另对 13 个多版本包的全部被压掉的版本逐个补查（0 新增告警）。
+响应：HTTP 200，metadata vulnerabilities：info 0、low 0、moderate 3、
+high 0、critical 2；advisories 共 5 条：
+1. vitest 3.2.7 | moderate | GHSA-82fw-gwwq-j7x9 / CVE-2026-84373 |
+   Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker
+   Redirect Mock | 影响 >=2.1.0 <4.1.11 | 修复 >=4.1.11
+2. @vitest/mocker 3.2.7 | moderate | GHSA-82fw-gwwq-j7x9 / CVE-2026-84373 |
+   同上 | 影响 >=2.1.0 <4.1.11 | 修复 >=4.1.11
+3. @vitest/mocker 3.2.7 | moderate | GHSA-qxg6-89mg-rqv8 / CVE-2026-112949 |
+   Vitest: Code injection via unauthenticated manual mock registration |
+   影响 >=2.1.0-beta.7 <4.1.12 | 修复 >=4.1.12
+4. tinypool 1.1.1 | critical | GHSA-5gmw-xhrv-c9v3 / CVE-2026-104848 |
+   Tinypool: Prototype Pollution gadget in worker options leads to RCE |
+   影响 <=2.1.0 | 修复 >=2.1.1
+5. tinypool 1.1.1 | critical | GHSA-85c8-ppgw-ccpr / CVE-2026-104849 |
+   Tinypool: Prototype Pollution Gadget to RCE in run() options |
+   影响 <2.1.2 | 修复 >=2.1.2
+
+与 GPT 小范围终验裁决“1 项 moderate、2 项 critical”的出入：实测为
+3 项 moderate + 2 项 critical。多的 2 项 moderate 均为 @vitest/mocker
+（其一与 vitest 同一 GHSA-82fw，其一为 GHSA-qxg6），不是编造，
+是本次直接审计的实测结果；GPT 引用的 3 项口径来源不明，已如实
+记下这一出入，不作调和。
+
+影响范围：5 条全部落在开发期工具链（vitest 及其依赖 tinypool），
+生产依赖 react 18.3.1 / react-dom 18.3.1 / tdesign-react 1.18.6
+无告警；交付物是静态 dist，无 Node 运行时、无对外开发服务器。
+5 条的利用前提均为开发服务器/测试进程本地可达（vitest 3 项须
+dev server WebSocket 可达，tinypool 2 项须先有原型污染原语），
+本交付不启动对外 dev server。未做盲目升级：vitest 3→4 是大版本
+升级、tinypool 1.1.1→2.1.2 跨大版本，均须另行评估回归风险。
+
+风险保留：只能确认已知依赖告警得到处理，不能宣称整个依赖树不
+存在风险。本次审计以 package-lock.json 重建的依赖树为准，不是
+npm audit 自身的输出（npm audit 在本机被代理 403 拦截）；如在能
+正常访问审计接口的机器上跑 npm audit，结果应以那次为准。

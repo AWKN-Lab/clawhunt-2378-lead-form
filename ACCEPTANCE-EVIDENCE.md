@@ -14,39 +14,43 @@ jev_decision 直接指派，交付截止 2026-11-28 11:52 UTC）。
   Vitest ^3.2.0 + Testing Library
 - 复跑命令（与 CI 步骤一致）：`bash scripts/run-all.sh`
   （npm ci → lint → typecheck → `npx vitest run` → build）
-- 完整实跑日志：`evidence/run-all.log`（EXIT=0，23 项全过），
-  变异自证日志：`evidence/mutation-check-20261125-rerun.log`
-  （MUTATION_EXIT=0；旧日志 `evidence/mutation-check.log` 为整改前
-  的历史记录，未改写）；MANIFEST 独立复核记录：
-  `evidence/manifest-verify-20261125.log`（29/29 OK，针对旧 HEAD
-  2fc2dca；新 HEAD 的 MANIFEST 见仓内 MANIFEST，`sha256sum -c` 全过）
+- 完整实跑日志：`evidence/run-all.log`（EXIT=0，24 项全过），
+  变异自证日志：`evidence/mutation-check-20261125-rerun2.log`
+  （MUTATION_EXIT=0；旧日志 `evidence/mutation-check-20261125-rerun.log`
+  与 `evidence/mutation-check.log` 均为历史记录，未改写）；
+  MANIFEST 独立复核记录：`evidence/manifest-verify-20261125-newhead.log`
+  （31/31 OK，针对上一 HEAD 04470d59，在干净副本里独立复核；
+  旧记录 `evidence/manifest-verify-20261125.log` 是针对更旧 HEAD
+  2fc2dca 的 29/29，未改写）；本 HEAD 的 MANIFEST 见仓内 MANIFEST，
+  `sha256sum -c` 全过；依赖审计证据：`evidence/npm-audit-20261125.log`
 
 ## 实跑输出（原文，见 evidence/run-all.log）
 
 ```
- ✓ src/lib/creditCode.test.ts (5 tests) 6ms
- ✓ src/components/LeadForm.test.tsx (18 tests) 7222ms
-   ✓ AC1 strong 归属他人 > AC1 提交按钮禁用且显示对方报备时间  581ms
-   ✓ AC1 strong 归属他人 > AC1 提供发起撞单申诉入口并带 matched_lead_id  618ms
-   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认、原因已填仍无法提交  778ms
-   ✓ AC2 weak 疑似重复 > AC2 weak 已勾选未填原因无法提交，填原因后可提交  719ms
-   ✓ AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交  721ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示  389ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_IN_POOL 显示对应中文提示  345ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_HOLDING_LIMIT 显示对应中文提示  373ms
-   ✓ 提交成功 > 提交成功跳转详情页并用 Toast 显示 mock 报备时间（演示数据）  486ms
-   ✓ 字段校验 > 企业名称 61 个字提示最多 60 个字  361ms
-   ✓ 异步撞单预检竞态 > 旧预检进行中修改企业名称，提交不得采用旧预检结果  347ms
-   ✓ 异步撞单预检竞态 > 旧请求晚于新请求返回，旧响应不得覆盖新状态  346ms
+ ✓ src/lib/creditCode.test.ts (5 tests) 11ms
+ ✓ src/components/LeadForm.test.tsx (19 tests) 11356ms
+   ✓ AC1 strong 归属他人 > AC1 提交按钮禁用且显示对方报备时间  856ms
+   ✓ AC1 strong 归属他人 > AC1 提供发起撞单申诉入口并带 matched_lead_id  554ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认、原因已填仍无法提交  1156ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 已勾选未填原因无法提交，填原因后可提交  997ms
+   ✓ AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交  978ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示  726ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_IN_POOL 显示对应中文提示  633ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_HOLDING_LIMIT 显示对应中文提示  577ms
+   ✓ 提交成功 > 提交成功跳转详情页并用 Toast 显示 mock 报备时间（演示数据）  839ms
+   ✓ 字段校验 > 企业名称 61 个字提示最多 60 个字  529ms
+   ✓ 异步撞单预检竞态 > 旧预检进行中修改企业名称，提交不得采用旧预检结果  563ms
+   ✓ 异步撞单预检竞态 > 旧请求晚于新请求返回，旧响应不得覆盖新状态  478ms
+   ✓ 异步撞单预检竞态 > 提交等待预检期间再次修改字段，不得用旧预检结果提交新字段  588ms
  Test Files  2 passed (2)
-      Tests  23 passed (23)
-   Duration  22.54s (transform 5.88s, setup 767ms, collect 12.83s, tests 7.23s, environment 2.54s, prepare 509ms)
-✓ built in 24.58s
+      Tests  24 passed (24)
+   Duration  31.39s (transform 7.73s, setup 1.05s, collect 16.37s, tests 11.37s, environment 3.65s, prepare 699ms)
+✓ built in 39.55s
 == 全部通过 ==
 ```
 
 （vitest 默认只逐行列出耗时较长的单项；其余 11 项计入文件汇总：
-组件 18 项 + 校验位 5 项 = 23 项，汇总 23 passed。）
+组件 19 项 + 校验位 5 项 = 24 项，汇总 24 passed。）
 
 ## 验收逐项映射
 
@@ -102,16 +106,24 @@ jev_decision 直接指派，交付截止 2026-11-28 11:52 UTC）。
   不比对任务 key；旧请求晚于新请求返回时还会覆盖新状态。
 - 修法（`src/components/LeadForm.tsx`）：每次失焦预检递增版本号
   `checkVersionRef`，`.then` 只在版本号最新且表单当前 key 等于该次预检
-  的 key 时才采纳响应；`submitFlow` 等在途预检前先比对 key（企业名称 +
-  信用代码 + 手机号），key 不一致就丢弃旧任务、按当前表单重新预检后再
-  决定能不能交。
-- 测试（`异步撞单预检竞态` 一组，2 项；用可控 fake api，每次预检返回
+  的 key 时才采纳响应；预检 Promise 携带它对应的 key
+  （`{ key, result }`）；`submitFlow` 提交前循环取最新预检结论：
+  读当前 key → 等该 key 的预检 → 再读当前 key，不同就重新预检；
+  只有结果 key 与提交时 key 完全一致，才允许提交（二次竞态修复，
+  2026-11-25 小范围终验后修：单次“等完再比对”不够，第二次等待期间
+  也可能再改字段，所以必须循环到 key 稳定为止）。
+- 测试（`异步撞单预检竞态` 一组，3 项；用可控 fake api，每次预检返回
   手动 resolve 的 deferred promise）：
   - `旧预检进行中修改企业名称，提交不得采用旧预检结果`
   - `旧请求晚于新请求返回，旧响应不得覆盖新状态`
-- 两项测试在旧实现下均真实失败过（旧预检 strong 归属他人结果挡住了
+  - `提交等待预检期间再次修改字段，不得用旧预检结果提交新字段`
+    （新增：提交等 B 的预检期间改成 C，B 返回无撞单后不得拿 B 的
+    结果提交 C，须按 C 重新预检；该测试在修前实现下真实失败过——
+    旧实现下第 4 次预检调用始终不出现，checkCalls 停在 3 次——
+    修后通过）
+- 前两项测试在旧实现下均真实失败过（旧预检 strong 归属他人结果挡住了
   新表单的提交；旧响应晚到后红条重新出现），新实现下全绿。
-- 复跑：`bash scripts/run-all.sh`，两项均过（见上文输出）
+- 复跑：`bash scripts/run-all.sh`，三项均过（见上文输出）
 
 ### 强在公海（AC 之外的三态之一）
 
@@ -141,20 +153,21 @@ jev_decision 直接指派，交付截止 2026-11-28 11:52 UTC）。
 ## 变异自证（门禁会红）
 
 `bash scripts/mutation-check.sh`，原文见
-`evidence/mutation-check-20261125-rerun.log`（整改后重跑，旧日志
+`evidence/mutation-check-20261125-rerun2.log`（二次竞态整改后重跑，
+旧日志 `evidence/mutation-check-20261125-rerun.log` 与
 `evidence/mutation-check.log` 未改写）：
 
 ```
 == 变异 A：信用代码校验位比较取反（!== 改成 ===）==
 变异 A 变红（符合预期）：
-      Tests  2 failed | 16 skipped (18)
+      Tests  2 failed | 17 skipped (19)
 变异 A 已还原
 == 变异 B：LEAD_COLLISION 映射串成 LEAD_IN_POOL 的文案 ==
 变异 B 变红（符合预期）：
-      Tests  1 failed | 17 skipped (18)
+      Tests  1 failed | 18 skipped (19)
 变异 B 已还原
 == 还原后全套测试（必须绿）==
-      Tests  23 passed (23)
+      Tests  24 passed (24)
 == 变异自证通过：两处变异均变红，还原后全绿 ==
 ```
 
@@ -181,21 +194,31 @@ Toast 与详情卡已带「（演示数据）」标注。
   不是真实服务端报备凭证；组件内 Toast 与详情卡已加注「（演示数据）」。
 - 本交付只含新建线索表单页；申诉页、公海领取页、详情页本身不在本次
   范围内（提交成功后用详情卡 + pushState 展示，不做整页路由）。
-- 依赖安全警告（2026-11-25 核查）：本机 `npm audit` 跑不通——出口代理
-  403 拦截审计接口（`POST https://registry.npmjs.org/-/npm/v1/security/audits/quick`，
-  策略 `zz_managed_internal_spaces_package_registries`）；仓库 Dependabot
-  alerts 已关闭，API 返回 403；CI 日志里 `npm ci` 只印了
-  `audited 293 packages`，无漏洞明细行——因此 GPT 复核提到的「1 项
-  moderate、2 项 critical」三项告警的具体包名在本机无法复现命名。
-  已按锁定版本逐项核对的知名告警均不受影响：vite 6.4.6 已是
-  GHSA-p4f5-76q4-ffq7（Critical，dev server RCE）与 GHSA-v2wj-q39q-566r
-  的修复版本；esbuild 0.25.12 已是 GHSA-67mh-4wv8-2f99（Moderate）的
-  修复版本；tough-cookie 5.1.2 已过 CVE-2023-26136 的修复版本 4.1.3；
-  React 两个 Critical（CVE-2025-55182、GHSA-xqc2-xf4c-x3h3）只影响
-  react-server-dom-* 19.x，本树无此类包、无服务端、无 RSC；生产依赖
-  只有 react / react-dom / tdesign-react 三项，其余全是开发期工具。
-  交付物是静态 dist，无 Node 运行时、无对外开发服务器——即使三项告警
-  属实，也只影响本地开发/测试工具链，不影响交付成品。未做盲目升级
-  （vite 6→8、esbuild 0.25→0.28 均有破坏性变更）；建议在能访问审计
-  接口的机器上重跑 `npm audit` 按名修复。
+- 依赖安全警告（2026-11-25 直接审计，证据 `evidence/npm-audit-20261125.log`）：
+  本机 `npm audit` 仍跑不通——出口代理对 npm CLI 的审计请求返回 403
+  （policy_denied，策略 `zz_managed_internal_spaces_package_registries`，
+  退出码 1）；但按 package-lock.json 重建依赖树（342 个包）直接 POST
+  同一审计接口返回 HTTP 200 与真实审计结果：**5 条告警，3 项 moderate +
+  2 项 critical**——vitest 3.2.7（moderate，GHSA-82fw-gwwq-j7x9 /
+  CVE-2026-84373，@vitest/mocker 重定向 mock 路径穿越读文件，修复
+  >=4.1.11）、@vitest/mocker 3.2.7（moderate，同一 GHSA-82fw，修复
+  >=4.1.11；另 moderate GHSA-qxg6-89mg-rqv8 / CVE-2026-112949，
+  未鉴权手动 mock 注册代码注入，修复 >=4.1.12）、tinypool 1.1.1
+  （critical ×2，GHSA-5gmw-xhrv-c9v3 / CVE-2026-104848 与
+  GHSA-85c8-ppgw-ccpr / CVE-2026-104849，原型污染 gadget 通向 RCE，
+  修复 >=2.1.1 / >=2.1.2）。13 个多版本包的全部被压掉的版本已逐个
+  补查，0 新增告警。此前逐项核对过的 vite 6.4.6、esbuild 0.25.12、
+  tough-cookie 5.1.2、React 18.3.1 在本次全树审计中均无告警。
+  与 GPT 小范围终验裁决“1 项 moderate、2 项 critical”的出入：实测为
+  3 项 moderate + 2 项 critical，多的 2 项 moderate 均为 @vitest/mocker，
+  来源不明，已如实记下，不作调和。5 条全部落在开发期工具链（vitest
+  及其依赖 tinypool），生产依赖 react 18.3.1 / react-dom 18.3.1 /
+  tdesign-react 1.18.6 无告警；交付物是静态 dist，无 Node 运行时、
+  无对外开发服务器；5 条的利用前提均为开发服务器/测试进程本地可达，
+  本交付不启动对外 dev server。未做盲目升级（vitest 3→4、tinypool
+  1→2 均跨大版本，须另行评估回归风险）。**风险保留：只能确认已知
+  依赖告警得到处理，不能宣称整个依赖树不存在风险。**本次审计以
+  package-lock.json 重建的依赖树为准，不是 npm audit 自身的输出
+  （npm audit 在本机被代理 403 拦截）；如在能正常访问审计接口的
+  机器上跑 npm audit，结果应以那次为准。
 - solution 未提交（提交通道等 GPT 裁决），平台未碰。

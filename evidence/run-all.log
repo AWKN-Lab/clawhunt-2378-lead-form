@@ -5,7 +5,7 @@ v24.22.1
 npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
 npm warn deprecated eslint@9.39.5: This version is no longer supported. Please see https://eslint.org/version-support for other options.
 
-added 292 packages in 33s
+added 292 packages in 46s
 
 65 packages are looking for funding
   run `npm fund` for details
@@ -21,27 +21,31 @@ added 292 packages in 33s
 
 == test ==
 
- RUN  v3.2.7 /home/hatch/workspace/goals/20/hidden_files/clawhunt-hourly-build/2378-fix/work
+ RUN  v3.2.7 /home/hatch/workspace/goals/20/hidden_files/clawhunt-hourly-build/2378-fix2/work
 
- ✓ src/lib/creditCode.test.ts (5 tests) 6ms
- ✓ src/components/LeadForm.test.tsx (18 tests) 7222ms
-   ✓ AC1 strong 归属他人 > AC1 提交按钮禁用且显示对方报备时间  581ms
-   ✓ AC1 strong 归属他人 > AC1 提供发起撞单申诉入口并带 matched_lead_id  618ms
-   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认、原因已填仍无法提交  778ms
-   ✓ AC2 weak 疑似重复 > AC2 weak 已勾选未填原因无法提交，填原因后可提交  719ms
-   ✓ AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交  721ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示  389ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_IN_POOL 显示对应中文提示  345ms
-   ✓ AC4 后端错误码中文提示 > AC4 LEAD_HOLDING_LIMIT 显示对应中文提示  373ms
-   ✓ 提交成功 > 提交成功跳转详情页并用 Toast 显示 mock 报备时间（演示数据）  486ms
-   ✓ 字段校验 > 企业名称 61 个字提示最多 60 个字  361ms
-   ✓ 异步撞单预检竞态 > 旧预检进行中修改企业名称，提交不得采用旧预检结果  347ms
-   ✓ 异步撞单预检竞态 > 旧请求晚于新请求返回，旧响应不得覆盖新状态  346ms
+ ✓ src/lib/creditCode.test.ts (5 tests) 11ms
+ ✓ src/components/LeadForm.test.tsx (19 tests) 11356ms
+   ✓ AC1 strong 归属他人 > AC1 提交按钮禁用且显示对方报备时间  856ms
+   ✓ AC1 strong 归属他人 > AC1 提供发起撞单申诉入口并带 matched_lead_id  554ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认无法提交  443ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 未勾选确认、原因已填仍无法提交  1156ms
+   ✓ AC2 weak 疑似重复 > AC2 weak 已勾选未填原因无法提交，填原因后可提交  997ms
+   ✓ AC3 信用代码校验位 > AC3 校验位错误显示字段级错误提示  493ms
+   ✓ AC3 信用代码校验位 > AC3 合法信用代码不报错，可正常提交  978ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_COLLISION 显示对应中文提示  726ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_IN_POOL 显示对应中文提示  633ms
+   ✓ AC4 后端错误码中文提示 > AC4 LEAD_HOLDING_LIMIT 显示对应中文提示  577ms
+   ✓ strong 在公海 > 显示在公海提示与去公海领取按钮  412ms
+   ✓ 提交成功 > 提交成功跳转详情页并用 Toast 显示 mock 报备时间（演示数据）  839ms
+   ✓ 字段校验 > 企业名称 61 个字提示最多 60 个字  529ms
+   ✓ 异步撞单预检竞态 > 旧预检进行中修改企业名称，提交不得采用旧预检结果  563ms
+   ✓ 异步撞单预检竞态 > 旧请求晚于新请求返回，旧响应不得覆盖新状态  478ms
+   ✓ 异步撞单预检竞态 > 提交等待预检期间再次修改字段，不得用旧预检结果提交新字段  588ms
 
  Test Files  2 passed (2)
-      Tests  23 passed (23)
-   Start at  13:43:34
-   Duration  22.54s (transform 5.88s, setup 767ms, collect 12.83s, tests 7.23s, environment 2.54s, prepare 509ms)
+      Tests  24 passed (24)
+   Start at  15:43:20
+   Duration  31.39s (transform 7.73s, setup 1.05s, collect 16.37s, tests 11.37s, environment 3.65s, prepare 699ms)
 
 == build ==
 
@@ -55,6 +59,6 @@ rendering chunks...
 computing gzip size...
 dist/index.html                   0.36 kB │ gzip:   0.29 kB
 dist/assets/index-viJtphAm.css  149.72 kB │ gzip:  15.72 kB
-dist/assets/index-C1-FqEwU.js   494.28 kB │ gzip: 155.03 kB
-✓ built in 24.58s
+dist/assets/index-qvcTkBvC.js   494.30 kB │ gzip: 155.01 kB
+✓ built in 39.55s
 == 全部通过 ==

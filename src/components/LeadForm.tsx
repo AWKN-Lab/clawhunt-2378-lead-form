@@ -63,9 +63,11 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
   const submittingRef = useRef(false);
   // 正在进行的预检（去重用）：失焦预检是异步的，提交时若有在途预检，
   // 直接等它，不要另起一次；key 是触发本次预检的三字段拼接。
+  // Promise 携带它对应的 key：提交流程凭 key 判定等到的结果
+  // 是否仍对应当前表单（二次竞态：等待期间字段可能再改）。
   const inFlightCheckRef = useRef<{
     key: string;
-    promise: Promise<CollisionResult | null>;
+    promise: Promise<{ key: string; result: CollisionResult | null }>;
   } | null>(null);
   // 预检请求版本号：每次新起预检递增。旧请求晚于新请求返回时，
   // 版本号已过期，其结果不得写回 state（过期响应隔离）。
@@ -90,16 +92,32 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
     return `${companyName}\n${creditCode}\n${phone}`;
   }
 
-  async function runCollisionCheck(): Promise<CollisionResult | null> {
+  // 读当前表单三字段拼接成的预检 key（企业名称 + 信用代码 + 手机号）。
+  function readCurrentKey(): string {
+    return checkKey(
+      (form.getFieldValue('companyName') as string | undefined) ?? '',
+      (form.getFieldValue('creditCode') as string | undefined) ?? '',
+      (form.getFieldValue('phone') as string | undefined) ?? '',
+    );
+  }
+
+  // 发起一次撞单预检（去重：同 key 的在途预检直接复用）。
+  // 返回的 Promise 始终携带本次预检对应的 key，调用方凭 key 判定
+  // 结果是否仍对应当前表单；失败时返回 { key, result: null }，
+  // 预检失败不拦提交（服务端提交时仍会按错误码拦截）。
+  async function runCollisionCheck(): Promise<{
+    key: string;
+    result: CollisionResult | null;
+  }> {
     const companyName = (form.getFieldValue('companyName') as string | undefined) ?? '';
     const creditCode = (form.getFieldValue('creditCode') as string | undefined) ?? '';
     const phone = (form.getFieldValue('phone') as string | undefined) ?? '';
+    const key = checkKey(companyName, creditCode, phone);
     if (companyName.trim() === '' && creditCode.trim() === '' && phone.trim() === '') {
       setCollision(null);
       lastCheckedKeyRef.current = null;
-      return null;
+      return { key, result: null };
     }
-    const key = checkKey(companyName, creditCode, phone);
     const inFlight = inFlightCheckRef.current;
     if (inFlight && inFlight.key === key) return inFlight.promise;
     setChecking(true);
@@ -124,11 +142,11 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
           }
           lastCheckedKeyRef.current = key;
         }
-        return result;
+        return { key, result };
       })
       .catch(() => {
         // 预检失败不拦提交：服务端提交时仍会按错误码拦截（LEAD_COLLISION 等）。
-        return null;
+        return { key, result: null as CollisionResult | null };
       })
       .finally(() => {
         // 只有最新一次预检能关掉“正在预检”提示；旧请求的 finally
@@ -142,6 +160,20 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
       });
     inFlightCheckRef.current = { key, promise };
     return promise;
+  }
+
+  // 提交前取一次预检结论：同 key 的在途预检就等它；该 key 已落定
+  // 就直接用 state 里的结果；否则按当前表单发起新预检。
+  // 返回值始终携带它对应的 key，调用方凭 key 判定结果是否仍有效。
+  async function ensureChecked(): Promise<{
+    key: string;
+    result: CollisionResult | null;
+  }> {
+    const key = readCurrentKey();
+    const inFlight = inFlightCheckRef.current;
+    if (inFlight && inFlight.key === key) return inFlight.promise;
+    if (key === lastCheckedKeyRef.current) return { key, result: collision };
+    return runCollisionCheck();
   }
 
   function handleCompanyNameChange() {
@@ -174,34 +206,19 @@ export default function LeadForm({ api = mockApi }: LeadFormProps) {
     try {
       const result = await form.validate();
       if (result !== true) return;
-      // 提交前先拿到最新的预检结论：只有在途预检的 key 与当前表单
-      // 一致时才等它；key 不一致（用户改了企业名/信用代码/手机号）
-      // 就丢弃旧任务，按当前表单重新预检。用返回的 result 而不用
-      // state 做判断——setState 是异步的，等完预检 state 不一定已更新。
-      const companyName =
-        (form.getFieldValue('companyName') as string | undefined) ?? '';
-      const creditCode =
-        (form.getFieldValue('creditCode') as string | undefined) ?? '';
-      const phone = (form.getFieldValue('phone') as string | undefined) ?? '';
-      const key = checkKey(companyName, creditCode, phone);
+      // 提交前循环取最新预检结论：读当前 key → 等该 key 的预检 →
+      // 再读当前 key；两者不同说明等待期间用户又改了字段，丢弃这次
+      // 结果重新预检；只有结果 key 与提交时 key 完全一致，才允许提交。
+      // （二次竞态：单次“等完再比对”不够——第二次等待期间也可能再改
+      // 字段，所以必须循环到 key 稳定为止。用返回的 result 而不用
+      // state 做判断——setState 是异步的，等完预检 state 不一定已更新。）
       let latest: CollisionResult | null;
-      const inFlight = inFlightCheckRef.current;
-      if (inFlight && inFlight.key === key) {
-        latest = await inFlight.promise;
-        // 等待期间用户可能又改了字段：key 变了就丢弃这次结果，
-        // 按当前表单重新预检后再决定能不能提交。
-        const keyAfter = checkKey(
-          (form.getFieldValue('companyName') as string | undefined) ?? '',
-          (form.getFieldValue('creditCode') as string | undefined) ?? '',
-          (form.getFieldValue('phone') as string | undefined) ?? '',
-        );
-        if (keyAfter !== key) {
-          latest = await runCollisionCheck();
+      for (;;) {
+        const checked = await ensureChecked();
+        if (readCurrentKey() === checked.key) {
+          latest = checked.result;
+          break;
         }
-      } else if (key !== lastCheckedKeyRef.current) {
-        latest = await runCollisionCheck();
-      } else {
-        latest = collision;
       }
       if (latest?.level === 'strong' && latest.owner === 'other') {
         setCollision(latest);
