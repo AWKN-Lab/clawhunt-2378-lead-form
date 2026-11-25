@@ -22,9 +22,11 @@ jev_decision 直接指派，交付截止 2026-11-28 11:52 UTC）。
   （34/34 OK，针对上一 HEAD 631f3baa，在干净副本里独立复核；
   旧记录 `evidence/manifest-verify-20261125-newhead.log` 是针对上一 HEAD
   04470d59 的 31/31，未改写；更旧记录 `evidence/manifest-verify-20261125.log`
-  是针对 2fc2dca 的 29/29，未改写）；当前 HEAD b3933523 的 MANIFEST 共 35 项，
-  本地干净副本 `sha256sum -c` 35/35（退出码 0），独立 tarball 校验日志按
-  既往模式须下一轮才有，尚未独立校验过；依赖审计证据：`evidence/npm-audit-20261125.log`
+  是针对 2fc2dca 的 29/29，未改写）；上一 HEAD b3933523：35 项，本地干净副本
+  校验 35/35；84d84c6c：35 项，本地干净副本校验 35/35；两者均尚无独立
+  tarball 校验日志。本提交的 MANIFEST 共 35 项，本地干净副本 `sha256sum -c`
+  35/35（退出码 0），独立 tarball 校验日志按既往模式须下一轮才有；
+  依赖审计证据：`evidence/npm-audit-20261125.log`
 
 ## 实跑输出（原文，见 evidence/run-all.log）
 
